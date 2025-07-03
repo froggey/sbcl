@@ -30,6 +30,7 @@
   (import '(sb-vm::*register-names*
             sb-vm::add-sub-immediate
             sb-vm::32-bit-reg sb-vm::single-reg sb-vm::double-reg
+            sb-vm::byte-reg sb-vm::half-reg
             sb-vm::complex-single-reg sb-vm::complex-double-reg
             sb-vm::tmp-tn sb-vm::wzr-tn sb-vm::zr-tn sb-vm::nsp-offset)))
 
@@ -1572,6 +1573,8 @@
                           complex-double-reg)
                          (setf opc (logior #b10 opc))
                          #b00)
+                        (byte-reg #b00)
+                        (half-reg #b01)
                         (t
                          (logior #b10
                                  (fp-reg-type dst)))))
@@ -3143,6 +3146,8 @@
                                     #+sb-simd-pack sb-vm::single-neon-reg
                                     complex-double-reg)
                                    #b10)
+                                  (byte-reg #b00)
+                                  (half-reg #b01)
                                   (t #b01))
                                 (if (fp-register-p dest)
                                     1

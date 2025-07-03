@@ -14,10 +14,19 @@
    (s8.16 s8  128 #:simd-pack-sb8 (#:int-neon-reg))
    (s16.8 s16 128 #:simd-pack-sb16 (#:int-neon-reg))
    (s32.4 s32 128 #:simd-pack-sb32 (#:int-neon-reg))
-   (s64.2 s64 128 #:simd-pack-sb64 (#:int-neon-reg)))
+   (s64.2 s64 128 #:simd-pack-sb64 (#:int-neon-reg))
+   ;; Short byte vectors, for partial ub8 array accesses
+   (u8.1  u8  8   #:simd-pack-ub8 (#:int-neon-reg))
+   (u8.2  u8  16  #:simd-pack-ub8 (#:int-neon-reg))
+   (u8.4  u8  32  #:simd-pack-ub8 (#:int-neon-reg))
+   (u8.8  u8  64  #:simd-pack-ub8 (#:int-neon-reg)))
   (:simd-casts
    (f32.4 f32.4-broadcast)
    (f64.2 f64.2-broadcast)
+   (u8.1  u8.16-broadcast)
+   (u8.2  u8.16-broadcast)
+   (u8.4  u8.16-broadcast)
+   (u8.8  u8.16-broadcast)
    (u8.16 u8.16-broadcast)
    (u16.8 u16.8-broadcast)
    (u32.4 u32.4-broadcast)
@@ -46,7 +55,11 @@
    (s8.16! s8.16!-from-s8  s8.16!-from-p128)
    (s16.8! s16.8!-from-s16 s16.8!-from-p128)
    (s32.4! s32.4!-from-s32 s32.4!-from-p128)
-   (s64.2! s64.2!-from-s64 s64.2!-from-p128))
+   (s64.2! s64.2!-from-s64 s64.2!-from-p128)
+   (u8.1!  u8.1!-from-p128)
+   (u8.2!  u8.2!-from-p128)
+   (u8.4!  u8.4!-from-p128)
+   (u8.8!  u8.8!-from-p128))
   (:instructions
    ;; f32
    (f32!-from-p128    nil        (f32) (p128)          :cost 1 :encoding :custom :always-translatable nil)
@@ -146,6 +159,10 @@
    (f64.2-zip-odd     #:zip2     (f64.2) (f64.2 f64.2) :cost 1 :suffix '(:2d))
    ;; u8
    (u8!-from-p128     #:umov     (u8) (p128)           :cost 1 :encoding :move :suffix '(0 :b) :always-translatable nil)
+   (u8.1!-from-p128   #:mov      (u8.1) (p128)         :cost 1 :encoding :move :suffix '(:16b) :always-translatable nil)
+   (u8.2!-from-p128   #:mov      (u8.2) (p128)         :cost 1 :encoding :move :suffix '(:16b) :always-translatable nil)
+   (u8.4!-from-p128   #:mov      (u8.4) (p128)         :cost 1 :encoding :move :suffix '(:16b) :always-translatable nil)
+   (u8.8!-from-p128   #:mov      (u8.8) (p128)         :cost 1 :encoding :move :suffix '(:16b) :always-translatable nil)
    ;; u8.16
    (u8.16!-from-u8    nil        (u8.16) (u8)          :cost 1 :encoding :custom)
    (u8.16!-from-p128  #:mov      (u8.16) (p128)        :cost 1 :encoding :move :always-translatable nil :suffix '(:16b))
@@ -575,6 +592,11 @@
    (s64.2-zip-even    #:zip1     (s64.2) (s64.2 s64.2) :cost 1 :suffix '(:2d))
    (s64.2-zip-odd     #:zip2     (s64.2) (s64.2 s64.2) :cost 1 :suffix '(:2d)))
   (:loads
+   ;; Short loads out of byte vectors.
+   (u8.1-load         #:ldr u8.1 u8vec u8-array u8.1-aref u8.1-row-major-aref)
+   (u8.2-load         #:ldr u8.2 u8vec u8-array u8.2-aref u8.2-row-major-aref)
+   (u8.4-load         #:ldr u8.4 u8vec u8-array u8.4-aref u8.4-row-major-aref)
+   (u8.8-load         #:ldr u8.8 u8vec u8-array u8.8-aref u8.8-row-major-aref)
    #+sb-unicode
    (u32.4-load-from-string #:ldr u32.4 charvec char-array u32.4-string-ref u32.4-row-major-string-ref)
    (f32.4-load        #:ldr  f32.4 f32vec f32-array f32.4-aref f32.4-row-major-aref)
@@ -648,6 +670,11 @@
    (s64.2-load-4      #:ld1  (s64.2 s64.2 s64.2 s64.2) s64vec s64-array s64.2-aref-4 s64.2-row-major-aref-4)
    (s64.2-load-4-interleaved #:ld4 (s64.2 s64.2 s64.2 s64.2) s64vec s64-array s64.2-aref-4-interleaved s64.2-row-major-aref-4-interleaved))
   (:stores
+   ;; Short stores into byte vectors.
+   (u8.1-store        #:str u8.1 u8vec u8-array u8.1-aref u8.1-row-major-aref)
+   (u8.2-store        #:str u8.2 u8vec u8-array u8.2-aref u8.2-row-major-aref)
+   (u8.4-store        #:str u8.4 u8vec u8-array u8.4-aref u8.4-row-major-aref)
+   (u8.8-store        #:str u8.8 u8vec u8-array u8.8-aref u8.8-row-major-aref)
    #+sb-unicode
    (u32.4-store-into-string #:str u32.4 charvec char-array u32.4-string-ref u32.4-row-major-string-ref)
    (f32.4-store       #:str  f32.4 f32vec f32-array f32.4-aref f32.4-row-major-aref)

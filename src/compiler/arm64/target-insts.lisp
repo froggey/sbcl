@@ -220,7 +220,13 @@
                  (princ (svref *register-names* reg) stream))
                 (t
                  (format stream "~a~d"
-                         (cond ((and (= size #b10)
+                         (cond ((and (= size #b00)
+                                     (= opc #b0))
+                                "B")
+                               ((and (= size #b01)
+                                     (= opc #b0))
+                                "H")
+                                ((and (= size #b10)
                                      (= opc #b0))
                                 "S")
                                ((and (= size #b11)

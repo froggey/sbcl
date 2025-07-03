@@ -122,7 +122,16 @@
                 (bytes-per-element (ceiling bits-per-element 8))
                 (shift (1- (integer-length bytes-per-element)))
                 (value-names (loop for x in value-record collect (gensym "VALUE")))
-                (temporary-names (loop for x in value-record collect (gensym "TEMP"))))
+                (temporary-names (loop for x in value-record collect (gensym "TEMP")))
+                (bits-per-value (sb-simd-internals:value-record-bits (first value-record)))
+                (single-value-name (if (eql bits-per-value 128)
+                                       (first value-names)
+                                       `(make-random-tn (sc-or-lose ',(ecase bits-per-value
+                                                                        (8 'byte-reg)
+                                                                        (16 'half-reg)
+                                                                        (32 'single-reg)
+                                                                        (64 'double-reg)))
+                                                        (tn-offset ,(first value-names))))))
            `(progn
               (defknown ,vop (,@(when store value-type) ,vector-type index (integer 0 0))
                   (values ,@value-type &optional)
@@ -194,7 +203,7 @@
                        `(sc-case index
                           (immediate
                            (inst ,mnemonic
-                                 ,@value-names
+                                 ,single-value-name
                                  (@ object (load-store-offset
                                             (+ (ash (tn-value index) ,shift)
                                                (- (ash vector-data-offset word-shift)
@@ -207,7 +216,7 @@
                                                          (asr index (- shift))
                                                          (lsl index shift))))
                            (inst ,mnemonic
-                                 ,@value-names
+                                 ,single-value-name
                                  (@ tmp-tn (load-store-offset (- (ash vector-data-offset word-shift)
                                                                  other-pointer-lowtag)))))))
                   ,@(when (and (not store) (rest value-record))

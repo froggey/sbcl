@@ -2210,6 +2210,15 @@
      #:f64.2-aref-3-interleaved #:f64.2-row-major-aref-3-interleaved
      #:f64.2-aref-4 #:f64.2-row-major-aref-4
      #:f64.2-aref-4-interleaved #:f64.2-row-major-aref-4-interleaved
+     ;; Partial vectors for accessing byte vectors.
+     #:u8.1!
+     #:u8.1-row-major-aref #:u8.1-aref
+     #:u8.2!
+     #:u8.2-row-major-aref #:u8.2-aref
+     #:u8.4!
+     #:u8.4-row-major-aref #:u8.4-aref
+     #:u8.8!
+     #:u8.8-row-major-aref #:u8.8-aref
      ;; u8.16
      #:make-u8.16
      #:u8.16

@@ -193,7 +193,8 @@
     (let ((simd-pack-type
             (let ((base-type
                     (ecase bits
-                      (128 (find-symbol "SIMD-PACK" "SB-EXT"))
+                      ((8 16 32 64 128)
+                       (find-symbol "SIMD-PACK" "SB-EXT"))
                       (256 (or (find-symbol "SIMD-PACK-256" "SB-EXT")
                                #-simd-pack-256
                                'simd-pack-256)))))

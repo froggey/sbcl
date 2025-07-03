@@ -216,6 +216,13 @@
                       :save-p t
                       :alternate-scs (complex-double-stack))
 
+  ;; Exotic, only constructed within some simd vops so the
+  ;; assember emits the right sizes.
+  (byte-reg float-registers
+            :locations #.(loop for i below 32 collect i))
+  (half-reg float-registers
+            :locations #.(loop for i below 32 collect i))
+
   ;; temporary only
   #+sb-simd-pack
   (neon-reg float-registers
