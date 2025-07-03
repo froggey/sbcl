@@ -105,7 +105,8 @@
                         (value-record load-record-value-record)
                         (vector-record load-record-vector-record))
            (find-function-record load-record-name)
-         (let ((simd-width (value-record-simd-width value-record))
+         (let ((simd-width (* (value-record-simd-width (first value-record))
+                              (length value-record)))
                (element-type
                  (second
                   (value-record-type vector-record))))
@@ -138,36 +139,64 @@
                         (value-record store-record-value-record)
                         (vector-record store-record-vector-record))
            (find-function-record store-record-name)
-         (let ((value-type (value-record-name value-record))
-               (simd-width (value-record-simd-width value-record))
+         (let ((value-type (value-record-name (first value-record)))
+               (simd-width (value-record-simd-width (first value-record)))
                (element-type
                  (second
-                  (value-record-type vector-record))))
+                  (value-record-type vector-record)))
+               (row-major-aref-function-name
+                 (if (endp (rest value-record))
+                     `(setf ,row-major-aref)
+                     (intern (format nil "%SETF-~A" row-major-aref)
+                             (symbol-package row-major-aref))))
+               (aref-function-name
+                 (if (endp (rest value-record))
+                     `(setf ,aref)
+                     (intern (format nil "%SETF-~A" aref)
+                             (symbol-package row-major-aref))))
+               (store-values (if (rest value-record)
+                                 (loop for x in value-record
+                                       collect (gensym "VALUE"))
+                                 (list 'value))))
            `(progn
-              (define-inline (setf ,row-major-aref) (value array index)
+              ;; If we're storing multiple values, then they're passed in by-value,
+              ;; which doesn't work with the regular (setf foo) function convention.
+              ;; Instead we define internal functions along with a setf expander that
+              ;; handles the values properly.
+              ,@(when (rest value-record)
+                  `((defsetf ,row-major-aref (array index) ,store-values
+                      `(,',row-major-aref-function-name ,,@store-values ,array ,index))
+                    (defsetf ,aref (array &rest indices) ,store-values
+                      `(,',aref-function-name ,,@store-values ,array ,@indices))))
+              (define-inline ,row-major-aref-function-name (,@store-values array index)
                 (declare (type (array ,element-type) array)
                          (index index))
-                (,store (,value-type value) array index))
-              (defun (setf ,aref) (value array &rest indices)
+                (,store ,@(loop for value in store-values
+                                collect `(,value-type ,value))
+                        array index))
+              (defun ,aref-function-name (,@store-values array &rest indices)
                 (declare (type (array ,element-type) array))
                 (,store
-                 (,value-type value)
+                 ,@(loop for value in store-values
+                         collect `(,value-type ,value))
                  array
                  (apply #'array-row-major-simd-index array ,simd-width indices)))
-              (define-compiler-macro (setf ,aref) (value array &rest indices)
-                (let* ((value-binding `(,(gensym "VALUE") ,value))
+              (define-compiler-macro ,aref-function-name (,@store-values array &rest indices)
+                (let* ((value-bindings (list ,@(loop for value in store-values
+                                                     collect ``(,(gensym "VALUE") ,,value))))
                        (array-binding `(,(gensym "ARRAY") ,array))
                        (index-bindings
                          (loop for index-form in indices
                                collect `(,(gensym "INDEX") ,index-form)))
                        (indices (mapcar #'first index-bindings))
-                       (value (first value-binding))
                        (array (first array-binding))
                        (index (gensym "INDEX")))
-                  `(let (,value-binding ,array-binding ,@index-bindings)
+                  `(let (,@value-bindings ,array-binding ,@index-bindings)
                      (declare (type (array ,',element-type) ,array))
                      (with-row-major-simd-index (,index ,array ,',simd-width ,@indices)
-                       (,',store (,',value-type ,value) ,array ,index)))))))))
+                       (,',store ,@(loop for (value) in value-bindings
+                                         collect `(,',value-type ,value))
+                                 ,array ,index)))))))))
      (define-arefs ()
        `(progn
           ,@(loop for load-record in (filter-function-records #'load-record-p)

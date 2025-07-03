@@ -615,12 +615,16 @@
         :row-major-aref (vref-record-row-major-aref vref-record)))
 
 (defmethod function-record-result-records ((vref-record vref-record))
-  (list
-   (vref-record-value-record vref-record)))
+  (vref-record-value-record vref-record))
 
 (defun decode-vref-record-definition (expr instance)
   (destructuring-bind (name mnemonic value-type vector-type array-type aref row-major-aref &rest rest) expr
-    `(let* ((.value-record. (find-value-record ',value-type))
+    (when (listp value-type)
+      (assert (every (lambda (x) (eql x (first value-type))) (rest value-type))))
+    `(let* ((.value-record. (list ,@(if (listp value-type)
+                                        (loop for type in value-type
+                                              collect `(find-value-record ',type))
+                                        `((find-value-record ',value-type)))))
             (.vector-record. (find-value-record ',vector-type))
             (.array-record. (find-value-record ',array-type))
             (.primitive.
@@ -639,23 +643,23 @@
                :name ',row-major-aref
                :array-record .array-record.
                :primitive .primitive.
-               :result-records (list .value-record.))
+               :result-records .value-record.)
             `(make-instance 'setf-row-major-aref-record
                :name '(setf ,row-major-aref)
                :array-record .array-record.
                :primitive .primitive.
-               :result-records (list .value-record.)))
+               :result-records .value-record.))
        ,(if (eq instance 'load-record)
             `(make-instance 'aref-record
                :name ',aref
                :array-record .array-record.
                :primitive .primitive.
-               :result-records (list .value-record.))
+               :result-records .value-record.)
             `(make-instance 'setf-aref-record
                :name '(setf ,aref)
                :array-record .array-record.
                :primitive .primitive.
-               :result-records (list .value-record.))))))
+               :result-records .value-record.)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -703,9 +707,9 @@
   (typep x 'store-record))
 
 (defmethod function-record-required-argument-records ((store-record store-record))
-  (list (store-record-value-record store-record)
-        (store-record-vector-record store-record)
-        (find-value-record 'sb-simd:index)))
+  (append (store-record-value-record store-record)
+          (list (store-record-vector-record store-record)
+                (find-value-record 'sb-simd:index))))
 
 (defmethod decode-record-definition ((_ (eql 'store-record)) expr)
   (decode-vref-record-definition expr 'store-record))
