@@ -2148,8 +2148,13 @@
      #:f32.4-horizontal+
      #:f32.4-incf
      #:f32.4-decf
-     #:f32.4-aref
-     #:f32.4-row-major-aref
+     #:f32.4-aref #:f32.4-row-major-aref
+     #:f32.4-aref-2 #:f32.4-row-major-aref-2
+     #:f32.4-aref-2-interleaved #:f32.4-row-major-aref-2-interleaved
+     #:f32.4-aref-3 #:f32.4-row-major-aref-3
+     #:f32.4-aref-3-interleaved #:f32.4-row-major-aref-3-interleaved
+     #:f32.4-aref-4 #:f32.4-row-major-aref-4
+     #:f32.4-aref-4-interleaved #:f32.4-row-major-aref-4-interleaved
      ;; f64.2
      #:make-f64.2
      #:f64.2
@@ -2198,8 +2203,13 @@
      #:f64.2-horizontal+
      #:f64.2-incf
      #:f64.2-decf
-     #:f64.2-aref
-     #:f64.2-row-major-aref
+     #:f64.2-aref #:f64.2-row-major-aref
+     #:f64.2-aref-2 #:f64.2-row-major-aref-2
+     #:f64.2-aref-2-interleaved #:f64.2-row-major-aref-2-interleaved
+     #:f64.2-aref-3 #:f64.2-row-major-aref-3
+     #:f64.2-aref-3-interleaved #:f64.2-row-major-aref-3-interleaved
+     #:f64.2-aref-4 #:f64.2-row-major-aref-4
+     #:f64.2-aref-4-interleaved #:f64.2-row-major-aref-4-interleaved
      ;; u8.16
      #:make-u8.16
      #:u8.16
@@ -2257,6 +2267,12 @@
      #:u8.16-incf
      #:u8.16-decf
      #:u8.16-aref #:u8.16-row-major-aref
+     #:u8.16-aref-2 #:u8.16-row-major-aref-2
+     #:u8.16-aref-2-interleaved #:u8.16-row-major-aref-2-interleaved
+     #:u8.16-aref-3 #:u8.16-row-major-aref-3
+     #:u8.16-aref-3-interleaved #:u8.16-row-major-aref-3-interleaved
+     #:u8.16-aref-4 #:u8.16-row-major-aref-4
+     #:u8.16-aref-4-interleaved #:u8.16-row-major-aref-4-interleaved
      ;; u16.8
      #:make-u16.8
      #:u16.8
@@ -2312,6 +2328,12 @@
      #:u16.8-incf
      #:u16.8-decf
      #:u16.8-aref #:u16.8-row-major-aref
+     #:u16.8-aref-2 #:u16.8-row-major-aref-2
+     #:u16.8-aref-2-interleaved #:u16.8-row-major-aref-2-interleaved
+     #:u16.8-aref-3 #:u16.8-row-major-aref-3
+     #:u16.8-aref-3-interleaved #:u16.8-row-major-aref-3-interleaved
+     #:u16.8-aref-4 #:u16.8-row-major-aref-4
+     #:u16.8-aref-4-interleaved #:u16.8-row-major-aref-4-interleaved
      ;; u32.4
      #:make-u32.4
      #:u32.4
@@ -2368,6 +2390,12 @@
      #:u32.4-incf
      #:u32.4-decf
      #:u32.4-aref #:u32.4-row-major-aref
+     #:u32.4-aref-2 #:u32.4-row-major-aref-2
+     #:u32.4-aref-2-interleaved #:u32.4-row-major-aref-2-interleaved
+     #:u32.4-aref-3 #:u32.4-row-major-aref-3
+     #:u32.4-aref-3-interleaved #:u32.4-row-major-aref-3-interleaved
+     #:u32.4-aref-4 #:u32.4-row-major-aref-4
+     #:u32.4-aref-4-interleaved #:u32.4-row-major-aref-4-interleaved
      #+sb-unicode
      #:u32.4-string-ref
      #+sb-unicode
@@ -2420,6 +2448,12 @@
      #:u64.2-incf
      #:u64.2-decf
      #:u64.2-aref #:u64.2-row-major-aref
+     #:u64.2-aref-2 #:u64.2-row-major-aref-2
+     #:u64.2-aref-2-interleaved #:u64.2-row-major-aref-2-interleaved
+     #:u64.2-aref-3 #:u64.2-row-major-aref-3
+     #:u64.2-aref-3-interleaved #:u64.2-row-major-aref-3-interleaved
+     #:u64.2-aref-4 #:u64.2-row-major-aref-4
+     #:u64.2-aref-4-interleaved #:u64.2-row-major-aref-4-interleaved
      ;; s8.16
      #:make-s8.16
      #:s8.16
@@ -2471,6 +2505,12 @@
      #:s8.16-incf
      #:s8.16-decf
      #:s8.16-aref #:s8.16-row-major-aref
+     #:s8.16-aref-2 #:s8.16-row-major-aref-2
+     #:s8.16-aref-2-interleaved #:s8.16-row-major-aref-2-interleaved
+     #:s8.16-aref-3 #:s8.16-row-major-aref-3
+     #:s8.16-aref-3-interleaved #:s8.16-row-major-aref-3-interleaved
+     #:s8.16-aref-4 #:s8.16-row-major-aref-4
+     #:s8.16-aref-4-interleaved #:s8.16-row-major-aref-4-interleaved
      ;; s16.8
      #:make-s16.8
      #:s16.8
@@ -2524,6 +2564,12 @@
      #:s16.8-incf
      #:s16.8-decf
      #:s16.8-aref #:s16.8-row-major-aref
+     #:s16.8-aref-2 #:s16.8-row-major-aref-2
+     #:s16.8-aref-2-interleaved #:s16.8-row-major-aref-2-interleaved
+     #:s16.8-aref-3 #:s16.8-row-major-aref-3
+     #:s16.8-aref-3-interleaved #:s16.8-row-major-aref-3-interleaved
+     #:s16.8-aref-4 #:s16.8-row-major-aref-4
+     #:s16.8-aref-4-interleaved #:s16.8-row-major-aref-4-interleaved
      ;; s32.4
      #:make-s32.4
      #:s32.4
@@ -2578,6 +2624,12 @@
      #:s32.4-incf
      #:s32.4-decf
      #:s32.4-aref #:s32.4-row-major-aref
+     #:s32.4-aref-2 #:s32.4-row-major-aref-2
+     #:s32.4-aref-2-interleaved #:s32.4-row-major-aref-2-interleaved
+     #:s32.4-aref-3 #:s32.4-row-major-aref-3
+     #:s32.4-aref-3-interleaved #:s32.4-row-major-aref-3-interleaved
+     #:s32.4-aref-4 #:s32.4-row-major-aref-4
+     #:s32.4-aref-4-interleaved #:s32.4-row-major-aref-4-interleaved
      ;; s64.2
      #:make-s64.2
      #:s64.2
@@ -2625,7 +2677,13 @@
      #:s64.2-shiftl
      #:s64.2-incf
      #:s64.2-decf
-     #:s64.2-aref #:s64.2-row-major-aref)))
+     #:s64.2-aref #:s64.2-row-major-aref
+     #:s64.2-aref-2 #:s64.2-row-major-aref-2
+     #:s64.2-aref-2-interleaved #:s64.2-row-major-aref-2-interleaved
+     #:s64.2-aref-3 #:s64.2-row-major-aref-3
+     #:s64.2-aref-3-interleaved #:s64.2-row-major-aref-3-interleaved
+     #:s64.2-aref-4 #:s64.2-row-major-aref-4
+     #:s64.2-aref-4-interleaved #:s64.2-row-major-aref-4-interleaved)))
 
 (dolist (p '("SB-SIMD" "SB-SIMD-ADVSIMD" "SB-SIMD-ARM64"
              "SB-SIMD-AVX" "SB-SIMD-AVX2" "SB-SIMD-FMA"
