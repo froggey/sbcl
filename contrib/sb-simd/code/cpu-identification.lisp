@@ -70,3 +70,11 @@
 
   (defun fma-supported-p ()
     nil))
+
+#+arm64
+(defun advsimd-supported-p ()
+  t)
+
+#-arm64
+(defun advsimd-supported-p ()
+  nil)

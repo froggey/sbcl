@@ -508,7 +508,7 @@
     :reader instruction-record-always-translatable)
    ;; How the instruction is turned into a VOP.
    (%encoding
-    :type (member :standard :sse :sse+xmm0 :custom :fake-vop :move :fma)
+    :type (member :standard :sse :sse+xmm0 :custom :fake-vop :move :fma :neon-rmw)
     :initarg :encoding
     :initform :standard
     :reader instruction-record-encoding)
